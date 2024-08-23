@@ -1,0 +1,360 @@
+#pragma version 10
+
+smart_contracts.resource_availability.contract.Counter.approval_program:
+    txn ApplicationID
+    bnz main_entrypoint@2
+    callsub __init__
+
+main_entrypoint@2:
+    // smart_contracts/resource_availability/contract.py:14
+    // class Counter(ARC4Contract):
+    txn NumAppArgs
+    bz main_bare_routing@10
+    method "increment()uint64"
+    method "opt_in()void"
+    method "increment_my_counter()uint64"
+    method "increment_box_counter(pay)uint64"
+    txna ApplicationArgs 0
+    match main_increment_route@4 main_opt_in_route@5 main_increment_my_counter_route@6 main_increment_box_counter_route@7
+    err // reject transaction
+
+main_increment_route@4:
+    // smart_contracts/resource_availability/contract.py:21
+    // @abimethod
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    callsub increment
+    itob
+    byte 0x151f7c75
+    swap
+    concat
+    log
+    int 1
+    return
+
+main_opt_in_route@5:
+    // smart_contracts/resource_availability/contract.py:26
+    // @abimethod(allow_actions=["OptIn"])
+    txn OnCompletion
+    int OptIn
+    ==
+    assert // OnCompletion is OptIn
+    txn ApplicationID
+    assert // is not creating
+    callsub opt_in
+    int 1
+    return
+
+main_increment_my_counter_route@6:
+    // smart_contracts/resource_availability/contract.py:30
+    // @abimethod
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    callsub increment_my_counter
+    itob
+    byte 0x151f7c75
+    swap
+    concat
+    log
+    int 1
+    return
+
+main_increment_box_counter_route@7:
+    // smart_contracts/resource_availability/contract.py:37
+    // @abimethod
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    // smart_contracts/resource_availability/contract.py:14
+    // class Counter(ARC4Contract):
+    txn GroupIndex
+    int 1
+    -
+    dup
+    gtxns TypeEnum
+    int pay
+    ==
+    assert // transaction type is pay
+    // smart_contracts/resource_availability/contract.py:37
+    // @abimethod
+    callsub increment_box_counter
+    itob
+    byte 0x151f7c75
+    swap
+    concat
+    log
+    int 1
+    return
+
+main_bare_routing@10:
+    // smart_contracts/resource_availability/contract.py:14
+    // class Counter(ARC4Contract):
+    txn OnCompletion
+    !
+    assert // reject transaction
+    txn ApplicationID
+    !
+    assert // is creating
+    int 1
+    return
+
+
+// smart_contracts.resource_availability.contract.Counter.increment() -> uint64:
+increment:
+    // smart_contracts/resource_availability/contract.py:21-22
+    // @abimethod
+    // def increment(self) -> UInt64:
+    proto 0 1
+    // smart_contracts/resource_availability/contract.py:23
+    // self.counter += 1
+    int 0
+    // smart_contracts/resource_availability/contract.py:17
+    // self.counter = UInt64(0)
+    byte "counter"
+    // smart_contracts/resource_availability/contract.py:23
+    // self.counter += 1
+    app_global_get_ex
+    assert // check self.counter exists
+    int 1
+    +
+    // smart_contracts/resource_availability/contract.py:17
+    // self.counter = UInt64(0)
+    byte "counter"
+    // smart_contracts/resource_availability/contract.py:23
+    // self.counter += 1
+    swap
+    app_global_put
+    // smart_contracts/resource_availability/contract.py:24
+    // return self.counter
+    int 0
+    // smart_contracts/resource_availability/contract.py:17
+    // self.counter = UInt64(0)
+    byte "counter"
+    // smart_contracts/resource_availability/contract.py:24
+    // return self.counter
+    app_global_get_ex
+    assert // check self.counter exists
+    retsub
+
+
+// smart_contracts.resource_availability.contract.Counter.opt_in() -> void:
+opt_in:
+    // smart_contracts/resource_availability/contract.py:26-27
+    // @abimethod(allow_actions=["OptIn"])
+    // def opt_in(self) -> None:
+    proto 0 0
+    // smart_contracts/resource_availability/contract.py:28
+    // self.my_counter[Txn.sender] = UInt64(0)
+    txn Sender
+    // smart_contracts/resource_availability/contract.py:18
+    // self.my_counter = LocalState(UInt64)
+    byte "my_counter"
+    // smart_contracts/resource_availability/contract.py:28
+    // self.my_counter[Txn.sender] = UInt64(0)
+    int 0
+    app_local_put
+    retsub
+
+
+// smart_contracts.resource_availability.contract.Counter.increment_my_counter() -> uint64:
+increment_my_counter:
+    // smart_contracts/resource_availability/contract.py:30-31
+    // @abimethod
+    // def increment_my_counter(self) -> UInt64:
+    proto 0 1
+    // smart_contracts/resource_availability/contract.py:32
+    // assert Txn.sender.is_opted_in(Global.current_application_id)
+    txn Sender
+    global CurrentApplicationID
+    app_opted_in
+    assert
+    // smart_contracts/resource_availability/contract.py:34
+    // self.my_counter[Txn.sender] += 1
+    txn Sender
+    int 0
+    // smart_contracts/resource_availability/contract.py:18
+    // self.my_counter = LocalState(UInt64)
+    byte "my_counter"
+    // smart_contracts/resource_availability/contract.py:34
+    // self.my_counter[Txn.sender] += 1
+    app_local_get_ex
+    assert // check self.my_counter exists for account
+    txn Sender
+    swap
+    int 1
+    +
+    // smart_contracts/resource_availability/contract.py:18
+    // self.my_counter = LocalState(UInt64)
+    byte "my_counter"
+    // smart_contracts/resource_availability/contract.py:34
+    // self.my_counter[Txn.sender] += 1
+    swap
+    app_local_put
+    // smart_contracts/resource_availability/contract.py:35
+    // return self.my_counter[Txn.sender]
+    txn Sender
+    int 0
+    // smart_contracts/resource_availability/contract.py:18
+    // self.my_counter = LocalState(UInt64)
+    byte "my_counter"
+    // smart_contracts/resource_availability/contract.py:35
+    // return self.my_counter[Txn.sender]
+    app_local_get_ex
+    assert // check self.my_counter exists for account
+    retsub
+
+
+// smart_contracts.resource_availability.contract.Counter.increment_box_counter(payMbr: uint64) -> uint64:
+increment_box_counter:
+    // smart_contracts/resource_availability/contract.py:37-38
+    // @abimethod
+    // def increment_box_counter(self, payMbr: gtxn.PaymentTransaction) -> UInt64:
+    proto 1 1
+    // smart_contracts/resource_availability/contract.py:39
+    // assert payMbr.amount == COUNTER_BOX_MBR
+    frame_dig -1
+    gtxns Amount
+    int 18500
+    ==
+    assert
+    // smart_contracts/resource_availability/contract.py:40
+    // assert payMbr.receiver == Global.current_application_address
+    frame_dig -1
+    gtxns Receiver
+    global CurrentApplicationAddress
+    ==
+    assert
+    // smart_contracts/resource_availability/contract.py:19
+    // self.box_counter = BoxMap(Account, UInt64)
+    byte "box_counter"
+    // smart_contracts/resource_availability/contract.py:42
+    // if Txn.sender in self.box_counter:
+    txn Sender
+    // smart_contracts/resource_availability/contract.py:19-42
+    //     self.box_counter = BoxMap(Account, UInt64)
+    // 
+    // @abimethod
+    // def increment(self) -> UInt64:
+    //     self.counter += 1
+    //     return self.counter
+    // 
+    // @abimethod(allow_actions=["OptIn"])
+    // def opt_in(self) -> None:
+    //     self.my_counter[Txn.sender] = UInt64(0)
+    // 
+    // @abimethod
+    // def increment_my_counter(self) -> UInt64:
+    //     assert Txn.sender.is_opted_in(Global.current_application_id)
+    // 
+    //     self.my_counter[Txn.sender] += 1
+    //     return self.my_counter[Txn.sender]
+    // 
+    // @abimethod
+    // def increment_box_counter(self, payMbr: gtxn.PaymentTransaction) -> UInt64:
+    //     assert payMbr.amount == COUNTER_BOX_MBR
+    //     assert payMbr.receiver == Global.current_application_address
+    // 
+    //     if Txn.sender in self.box_counter:
+    concat
+    box_len
+    bury 1
+    // smart_contracts/resource_availability/contract.py:42
+    // if Txn.sender in self.box_counter:
+    bz increment_box_counter_else_body@2
+    // smart_contracts/resource_availability/contract.py:19
+    // self.box_counter = BoxMap(Account, UInt64)
+    byte "box_counter"
+    // smart_contracts/resource_availability/contract.py:43
+    // self.box_counter[Txn.sender] += 1
+    txn Sender
+    concat
+    box_get
+    swap
+    btoi
+    swap
+    assert // check self.box_counter entry exists
+    // smart_contracts/resource_availability/contract.py:19
+    // self.box_counter = BoxMap(Account, UInt64)
+    byte "box_counter"
+    // smart_contracts/resource_availability/contract.py:43
+    // self.box_counter[Txn.sender] += 1
+    txn Sender
+    concat
+    swap
+    int 1
+    +
+    itob
+    box_put
+    b increment_box_counter_after_if_else@3
+
+increment_box_counter_else_body@2:
+    // smart_contracts/resource_availability/contract.py:19
+    // self.box_counter = BoxMap(Account, UInt64)
+    byte "box_counter"
+    // smart_contracts/resource_availability/contract.py:45
+    // self.box_counter[Txn.sender] = UInt64(0)
+    txn Sender
+    concat
+    int 0
+    itob
+    box_put
+    // smart_contracts/resource_availability/contract.py:19
+    // self.box_counter = BoxMap(Account, UInt64)
+    byte "box_counter"
+    // smart_contracts/resource_availability/contract.py:46
+    // self.box_counter[Txn.sender] += 1
+    txn Sender
+    concat
+    box_get
+    swap
+    btoi
+    swap
+    assert // check self.box_counter entry exists
+    // smart_contracts/resource_availability/contract.py:19
+    // self.box_counter = BoxMap(Account, UInt64)
+    byte "box_counter"
+    // smart_contracts/resource_availability/contract.py:46
+    // self.box_counter[Txn.sender] += 1
+    txn Sender
+    concat
+    swap
+    int 1
+    +
+    itob
+    box_put
+
+increment_box_counter_after_if_else@3:
+    // smart_contracts/resource_availability/contract.py:19
+    // self.box_counter = BoxMap(Account, UInt64)
+    byte "box_counter"
+    // smart_contracts/resource_availability/contract.py:48
+    // return self.box_counter[Txn.sender]
+    txn Sender
+    concat
+    box_get
+    swap
+    btoi
+    swap
+    assert // check self.box_counter entry exists
+    retsub
+
+
+// smart_contracts.resource_availability.contract.Counter.__init__() -> void:
+__init__:
+    // smart_contracts/resource_availability/contract.py:16
+    // def __init__(self) -> None:
+    proto 0 0
+    // smart_contracts/resource_availability/contract.py:17
+    // self.counter = UInt64(0)
+    byte "counter"
+    int 0
+    app_global_put
+    retsub

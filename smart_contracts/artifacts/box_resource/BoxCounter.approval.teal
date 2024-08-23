@@ -1,0 +1,172 @@
+#pragma version 10
+
+smart_contracts.box_resource.contract.BoxCounter.approval_program:
+    // smart_contracts/box_resource/contract.py:9
+    // class BoxCounter(ARC4Contract):
+    txn NumAppArgs
+    bz main_bare_routing@5
+    method "increment_box_counter(pay)uint64"
+    txna ApplicationArgs 0
+    match main_increment_box_counter_route@2
+    err // reject transaction
+
+main_increment_box_counter_route@2:
+    // smart_contracts/box_resource/contract.py:15
+    // @abimethod
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    // smart_contracts/box_resource/contract.py:9
+    // class BoxCounter(ARC4Contract):
+    txn GroupIndex
+    int 1
+    -
+    dup
+    gtxns TypeEnum
+    int pay
+    ==
+    assert // transaction type is pay
+    // smart_contracts/box_resource/contract.py:15
+    // @abimethod
+    callsub increment_box_counter
+    itob
+    byte 0x151f7c75
+    swap
+    concat
+    log
+    int 1
+    return
+
+main_bare_routing@5:
+    // smart_contracts/box_resource/contract.py:9
+    // class BoxCounter(ARC4Contract):
+    txn OnCompletion
+    !
+    assert // reject transaction
+    txn ApplicationID
+    !
+    assert // is creating
+    int 1
+    return
+
+
+// smart_contracts.box_resource.contract.BoxCounter.increment_box_counter(payMbr: uint64) -> uint64:
+increment_box_counter:
+    // smart_contracts/box_resource/contract.py:15-16
+    // @abimethod
+    // def increment_box_counter(self, payMbr: gtxn.PaymentTransaction) -> UInt64:
+    proto 1 1
+    // smart_contracts/box_resource/contract.py:17
+    // assert payMbr.amount == COUNTER_BOX_MBR
+    frame_dig -1
+    gtxns Amount
+    int 18500
+    ==
+    assert
+    // smart_contracts/box_resource/contract.py:18
+    // assert payMbr.receiver == Global.current_application_address
+    frame_dig -1
+    gtxns Receiver
+    global CurrentApplicationAddress
+    ==
+    assert
+    // smart_contracts/box_resource/contract.py:12
+    // self.box_counter = BoxMap(Account, UInt64)
+    byte "box_counter"
+    // smart_contracts/box_resource/contract.py:20
+    // if Txn.sender in self.box_counter:
+    txn Sender
+    // smart_contracts/box_resource/contract.py:12-20
+    //     self.box_counter = BoxMap(Account, UInt64)
+    // 
+    // 
+    // @abimethod
+    // def increment_box_counter(self, payMbr: gtxn.PaymentTransaction) -> UInt64:
+    //     assert payMbr.amount == COUNTER_BOX_MBR
+    //     assert payMbr.receiver == Global.current_application_address
+    // 
+    //     if Txn.sender in self.box_counter:
+    concat
+    box_len
+    bury 1
+    // smart_contracts/box_resource/contract.py:20
+    // if Txn.sender in self.box_counter:
+    bz increment_box_counter_else_body@2
+    // smart_contracts/box_resource/contract.py:12
+    // self.box_counter = BoxMap(Account, UInt64)
+    byte "box_counter"
+    // smart_contracts/box_resource/contract.py:21
+    // self.box_counter[Txn.sender] += 1
+    txn Sender
+    concat
+    box_get
+    swap
+    btoi
+    swap
+    assert // check self.box_counter entry exists
+    // smart_contracts/box_resource/contract.py:12
+    // self.box_counter = BoxMap(Account, UInt64)
+    byte "box_counter"
+    // smart_contracts/box_resource/contract.py:21
+    // self.box_counter[Txn.sender] += 1
+    txn Sender
+    concat
+    swap
+    int 1
+    +
+    itob
+    box_put
+    b increment_box_counter_after_if_else@3
+
+increment_box_counter_else_body@2:
+    // smart_contracts/box_resource/contract.py:12
+    // self.box_counter = BoxMap(Account, UInt64)
+    byte "box_counter"
+    // smart_contracts/box_resource/contract.py:23
+    // self.box_counter[Txn.sender] = UInt64(0)
+    txn Sender
+    concat
+    int 0
+    itob
+    box_put
+    // smart_contracts/box_resource/contract.py:12
+    // self.box_counter = BoxMap(Account, UInt64)
+    byte "box_counter"
+    // smart_contracts/box_resource/contract.py:24
+    // self.box_counter[Txn.sender] += 1
+    txn Sender
+    concat
+    box_get
+    swap
+    btoi
+    swap
+    assert // check self.box_counter entry exists
+    // smart_contracts/box_resource/contract.py:12
+    // self.box_counter = BoxMap(Account, UInt64)
+    byte "box_counter"
+    // smart_contracts/box_resource/contract.py:24
+    // self.box_counter[Txn.sender] += 1
+    txn Sender
+    concat
+    swap
+    int 1
+    +
+    itob
+    box_put
+
+increment_box_counter_after_if_else@3:
+    // smart_contracts/box_resource/contract.py:12
+    // self.box_counter = BoxMap(Account, UInt64)
+    byte "box_counter"
+    // smart_contracts/box_resource/contract.py:26
+    // return self.box_counter[Txn.sender]
+    txn Sender
+    concat
+    box_get
+    swap
+    btoi
+    swap
+    assert // check self.box_counter entry exists
+    retsub

@@ -1,0 +1,7 @@
+#pragma version 10
+
+smart_contracts.resource_availability.contract.Counter.clear_state_program:
+    // smart_contracts/resource_availability/contract.py:14
+    // class Counter(ARC4Contract):
+    int 1
+    return

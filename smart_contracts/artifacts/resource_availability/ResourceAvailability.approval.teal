@@ -1,0 +1,592 @@
+#pragma version 10
+
+smart_contracts.resource_availability.contract.ResourceAvailability.approval_program:
+    // smart_contracts/resource_availability/contract.py:51
+    // class ResourceAvailability(ARC4Contract):
+    txn NumAppArgs
+    bz main_bare_routing@16
+    method "get_account_balance()uint64"
+    method "get_account_balance_with_arg(account)uint64"
+    method "get_asset_total_supply()uint64"
+    method "get_asset_total_supply_with_arg(asset)uint64"
+    method "get_app_global_num_uint()uint64"
+    method "get_app_global_num_uint_with_arg(application)uint64"
+    method "increment_via_inner()uint64"
+    method "increment_via_inner_with_arg(application)uint64"
+    method "get_asset_balance()uint64"
+    method "get_asset_balance_with_arg(account,asset)uint64"
+    method "get_my_counter()uint64"
+    method "get_my_counter_with_arg(account,application)uint64"
+    txna ApplicationArgs 0
+    match main_get_account_balance_route@2 main_get_account_balance_with_arg_route@3 main_get_asset_total_supply_route@4 main_get_asset_total_supply_with_arg_route@5 main_get_app_global_num_uint_route@6 main_get_app_global_num_uint_with_arg_route@7 main_increment_via_inner_route@8 main_increment_via_inner_with_arg_route@9 main_get_asset_balance_route@10 main_get_asset_balance_with_arg_route@11 main_get_my_counter_route@12 main_get_my_counter_with_arg_route@13
+    err // reject transaction
+
+main_get_account_balance_route@2:
+    // smart_contracts/resource_availability/contract.py:53
+    // @abimethod()
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    callsub get_account_balance
+    itob
+    byte 0x151f7c75
+    swap
+    concat
+    log
+    int 1
+    return
+
+main_get_account_balance_with_arg_route@3:
+    // smart_contracts/resource_availability/contract.py:57
+    // @abimethod()
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    // smart_contracts/resource_availability/contract.py:51
+    // class ResourceAvailability(ARC4Contract):
+    txna ApplicationArgs 1
+    btoi
+    txnas Accounts
+    // smart_contracts/resource_availability/contract.py:57
+    // @abimethod()
+    callsub get_account_balance_with_arg
+    itob
+    byte 0x151f7c75
+    swap
+    concat
+    log
+    int 1
+    return
+
+main_get_asset_total_supply_route@4:
+    // smart_contracts/resource_availability/contract.py:61
+    // @abimethod()
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    callsub get_asset_total_supply
+    itob
+    byte 0x151f7c75
+    swap
+    concat
+    log
+    int 1
+    return
+
+main_get_asset_total_supply_with_arg_route@5:
+    // smart_contracts/resource_availability/contract.py:65
+    // @abimethod()
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    // smart_contracts/resource_availability/contract.py:51
+    // class ResourceAvailability(ARC4Contract):
+    txna ApplicationArgs 1
+    btoi
+    txnas Assets
+    // smart_contracts/resource_availability/contract.py:65
+    // @abimethod()
+    callsub get_asset_total_supply_with_arg
+    itob
+    byte 0x151f7c75
+    swap
+    concat
+    log
+    int 1
+    return
+
+main_get_app_global_num_uint_route@6:
+    // smart_contracts/resource_availability/contract.py:69
+    // @abimethod()
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    callsub get_app_global_num_uint
+    itob
+    byte 0x151f7c75
+    swap
+    concat
+    log
+    int 1
+    return
+
+main_get_app_global_num_uint_with_arg_route@7:
+    // smart_contracts/resource_availability/contract.py:73
+    // @abimethod()
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    // smart_contracts/resource_availability/contract.py:51
+    // class ResourceAvailability(ARC4Contract):
+    txna ApplicationArgs 1
+    btoi
+    txnas Applications
+    // smart_contracts/resource_availability/contract.py:73
+    // @abimethod()
+    callsub get_app_global_num_uint_with_arg
+    itob
+    byte 0x151f7c75
+    swap
+    concat
+    log
+    int 1
+    return
+
+main_increment_via_inner_route@8:
+    // smart_contracts/resource_availability/contract.py:78
+    // @abimethod()
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    callsub increment_via_inner
+    itob
+    byte 0x151f7c75
+    swap
+    concat
+    log
+    int 1
+    return
+
+main_increment_via_inner_with_arg_route@9:
+    // smart_contracts/resource_availability/contract.py:89
+    // @abimethod()
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    // smart_contracts/resource_availability/contract.py:51
+    // class ResourceAvailability(ARC4Contract):
+    txna ApplicationArgs 1
+    btoi
+    txnas Applications
+    // smart_contracts/resource_availability/contract.py:89
+    // @abimethod()
+    callsub increment_via_inner_with_arg
+    itob
+    byte 0x151f7c75
+    swap
+    concat
+    log
+    int 1
+    return
+
+main_get_asset_balance_route@10:
+    // smart_contracts/resource_availability/contract.py:98-99
+    // # Account + Asset examples
+    // @abimethod
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    callsub get_asset_balance
+    itob
+    byte 0x151f7c75
+    swap
+    concat
+    log
+    int 1
+    return
+
+main_get_asset_balance_with_arg_route@11:
+    // smart_contracts/resource_availability/contract.py:109
+    // @abimethod
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    // smart_contracts/resource_availability/contract.py:51
+    // class ResourceAvailability(ARC4Contract):
+    txna ApplicationArgs 1
+    btoi
+    txnas Accounts
+    txna ApplicationArgs 2
+    btoi
+    txnas Assets
+    // smart_contracts/resource_availability/contract.py:109
+    // @abimethod
+    callsub get_asset_balance_with_arg
+    itob
+    byte 0x151f7c75
+    swap
+    concat
+    log
+    int 1
+    return
+
+main_get_my_counter_route@12:
+    // smart_contracts/resource_availability/contract.py:117-118
+    // # Account + Application examples
+    // @abimethod
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    callsub get_my_counter
+    itob
+    byte 0x151f7c75
+    swap
+    concat
+    log
+    int 1
+    return
+
+main_get_my_counter_with_arg_route@13:
+    // smart_contracts/resource_availability/contract.py:127
+    // @abimethod
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    // smart_contracts/resource_availability/contract.py:51
+    // class ResourceAvailability(ARC4Contract):
+    txna ApplicationArgs 1
+    btoi
+    txnas Accounts
+    txna ApplicationArgs 2
+    btoi
+    txnas Applications
+    // smart_contracts/resource_availability/contract.py:127
+    // @abimethod
+    callsub get_my_counter_with_arg
+    itob
+    byte 0x151f7c75
+    swap
+    concat
+    log
+    int 1
+    return
+
+main_bare_routing@16:
+    // smart_contracts/resource_availability/contract.py:51
+    // class ResourceAvailability(ARC4Contract):
+    txn OnCompletion
+    !
+    assert // reject transaction
+    txn ApplicationID
+    !
+    assert // is creating
+    int 1
+    return
+
+
+// smart_contracts.resource_availability.contract.ResourceAvailability.get_account_balance() -> uint64:
+get_account_balance:
+    // smart_contracts/resource_availability/contract.py:53-54
+    // @abimethod()
+    // def get_account_balance(self) -> UInt64:
+    proto 0 1
+    // smart_contracts/resource_availability/contract.py:55
+    // return Account(ALICE_ADDRESS).balance
+    addr 5EQOFNPSRNI6XT3QWKB3TLGIPBHW4OBDYIMAYRAKSLRC23QAHLB2TR5CKE
+    acct_params_get AcctBalance
+    assert // account funded
+    retsub
+
+
+// smart_contracts.resource_availability.contract.ResourceAvailability.get_account_balance_with_arg(acct: bytes) -> uint64:
+get_account_balance_with_arg:
+    // smart_contracts/resource_availability/contract.py:57-58
+    // @abimethod()
+    // def get_account_balance_with_arg(self, acct: Account) -> UInt64:
+    proto 1 1
+    // smart_contracts/resource_availability/contract.py:59
+    // return acct.balance
+    frame_dig -1
+    acct_params_get AcctBalance
+    assert // account funded
+    retsub
+
+
+// smart_contracts.resource_availability.contract.ResourceAvailability.get_asset_total_supply() -> uint64:
+get_asset_total_supply:
+    // smart_contracts/resource_availability/contract.py:61-62
+    // @abimethod()
+    // def get_asset_total_supply(self) -> UInt64:
+    proto 0 1
+    // smart_contracts/resource_availability/contract.py:63
+    // return Asset(HELLO_DEV_ASSET_ID).total
+    int 1164
+    asset_params_get AssetTotal
+    assert // asset exists
+    retsub
+
+
+// smart_contracts.resource_availability.contract.ResourceAvailability.get_asset_total_supply_with_arg(asa: uint64) -> uint64:
+get_asset_total_supply_with_arg:
+    // smart_contracts/resource_availability/contract.py:65-66
+    // @abimethod()
+    // def get_asset_total_supply_with_arg(self, asa: Asset) -> UInt64:
+    proto 1 1
+    // smart_contracts/resource_availability/contract.py:67
+    // return asa.total
+    frame_dig -1
+    asset_params_get AssetTotal
+    assert // asset exists
+    retsub
+
+
+// smart_contracts.resource_availability.contract.ResourceAvailability.get_app_global_num_uint() -> uint64:
+get_app_global_num_uint:
+    // smart_contracts/resource_availability/contract.py:69-70
+    // @abimethod()
+    // def get_app_global_num_uint(self) -> UInt64:
+    proto 0 1
+    // smart_contracts/resource_availability/contract.py:71
+    // return Application(COUNTER_APP_ID).global_num_uint
+    int 1131
+    app_params_get AppGlobalNumUint
+    assert // application exists
+    retsub
+
+
+// smart_contracts.resource_availability.contract.ResourceAvailability.get_app_global_num_uint_with_arg(app: uint64) -> uint64:
+get_app_global_num_uint_with_arg:
+    // smart_contracts/resource_availability/contract.py:73-74
+    // @abimethod()
+    // def get_app_global_num_uint_with_arg(self, app: Application) -> UInt64:
+    proto 1 1
+    // smart_contracts/resource_availability/contract.py:75
+    // return app.global_num_uint
+    frame_dig -1
+    app_params_get AppGlobalNumUint
+    assert // application exists
+    retsub
+
+
+// smart_contracts.resource_availability.contract.ResourceAvailability.increment_via_inner() -> uint64:
+increment_via_inner:
+    // smart_contracts/resource_availability/contract.py:78-79
+    // @abimethod()
+    // def increment_via_inner(self) -> UInt64:
+    proto 0 1
+    // smart_contracts/resource_availability/contract.py:82-86
+    // counter_result, call_txn = arc4.abi_call(
+    //     Counter.increment,
+    //     fee=0,
+    //     app_id=app,
+    // )
+    itxn_begin
+    // smart_contracts/resource_availability/contract.py:80
+    // app = Application(COUNTER_APP_ID)
+    int 1131
+    itxn_field ApplicationID
+    // smart_contracts/resource_availability/contract.py:82-86
+    // counter_result, call_txn = arc4.abi_call(
+    //     Counter.increment,
+    //     fee=0,
+    //     app_id=app,
+    // )
+    method "increment()uint64"
+    itxn_field ApplicationArgs
+    int appl
+    itxn_field TypeEnum
+    // smart_contracts/resource_availability/contract.py:84
+    // fee=0,
+    int 0
+    itxn_field Fee
+    // smart_contracts/resource_availability/contract.py:82-86
+    // counter_result, call_txn = arc4.abi_call(
+    //     Counter.increment,
+    //     fee=0,
+    //     app_id=app,
+    // )
+    itxn_submit
+    itxn LastLog
+    dup
+    extract 4 0
+    swap
+    extract 0 4
+    byte 0x151f7c75
+    ==
+    assert // ARC4 prefix is valid
+    btoi
+    // smart_contracts/resource_availability/contract.py:87
+    // return counter_result
+    retsub
+
+
+// smart_contracts.resource_availability.contract.ResourceAvailability.increment_via_inner_with_arg(app: uint64) -> uint64:
+increment_via_inner_with_arg:
+    // smart_contracts/resource_availability/contract.py:89-90
+    // @abimethod()
+    // def increment_via_inner_with_arg(self, app: Application) -> UInt64:
+    proto 1 1
+    // smart_contracts/resource_availability/contract.py:91-95
+    // counter_result, call_txn = arc4.abi_call(
+    //     Counter.increment,
+    //     fee=0,
+    //     app_id=app
+    // )
+    itxn_begin
+    frame_dig -1
+    itxn_field ApplicationID
+    method "increment()uint64"
+    itxn_field ApplicationArgs
+    int appl
+    itxn_field TypeEnum
+    // smart_contracts/resource_availability/contract.py:93
+    // fee=0,
+    int 0
+    itxn_field Fee
+    // smart_contracts/resource_availability/contract.py:91-95
+    // counter_result, call_txn = arc4.abi_call(
+    //     Counter.increment,
+    //     fee=0,
+    //     app_id=app
+    // )
+    itxn_submit
+    itxn LastLog
+    dup
+    extract 4 0
+    swap
+    extract 0 4
+    byte 0x151f7c75
+    ==
+    assert // ARC4 prefix is valid
+    btoi
+    // smart_contracts/resource_availability/contract.py:96
+    // return counter_result
+    retsub
+
+
+// smart_contracts.resource_availability.contract.ResourceAvailability.get_asset_balance() -> uint64:
+get_asset_balance:
+    // smart_contracts/resource_availability/contract.py:98-100
+    // # Account + Asset examples
+    // @abimethod
+    // def get_asset_balance(self) -> UInt64:
+    proto 0 1
+    // smart_contracts/resource_availability/contract.py:101
+    // acct = Account(ALICE_ADDRESS)
+    addr 5EQOFNPSRNI6XT3QWKB3TLGIPBHW4OBDYIMAYRAKSLRC23QAHLB2TR5CKE
+    // smart_contracts/resource_availability/contract.py:102
+    // asset = Asset(HELLO_DEV_ASSET_ID)
+    int 1164
+    // smart_contracts/resource_availability/contract.py:103
+    // balance, has_value = op.AssetHoldingGet.asset_balance(acct, asset)
+    asset_holding_get AssetBalance
+    // smart_contracts/resource_availability/contract.py:105
+    // if has_value:
+    bz get_asset_balance_after_if_else@2
+    // smart_contracts/resource_availability/contract.py:106
+    // return balance
+    frame_dig 0
+    swap
+    retsub
+
+get_asset_balance_after_if_else@2:
+    // smart_contracts/resource_availability/contract.py:107
+    // return UInt64(0)
+    int 0
+    swap
+    retsub
+
+
+// smart_contracts.resource_availability.contract.ResourceAvailability.get_asset_balance_with_arg(acct: bytes, asset: uint64) -> uint64:
+get_asset_balance_with_arg:
+    // smart_contracts/resource_availability/contract.py:109-110
+    // @abimethod
+    // def get_asset_balance_with_arg(self, acct: Account, asset: Asset) -> UInt64:
+    proto 2 1
+    // smart_contracts/resource_availability/contract.py:111
+    // balance, has_value = op.AssetHoldingGet.asset_balance(acct, asset)
+    frame_dig -2
+    frame_dig -1
+    asset_holding_get AssetBalance
+    // smart_contracts/resource_availability/contract.py:113
+    // if has_value:
+    bz get_asset_balance_with_arg_after_if_else@2
+    // smart_contracts/resource_availability/contract.py:114
+    // return balance
+    frame_dig 0
+    swap
+    retsub
+
+get_asset_balance_with_arg_after_if_else@2:
+    // smart_contracts/resource_availability/contract.py:115
+    // return UInt64(0)
+    int 0
+    swap
+    retsub
+
+
+// smart_contracts.resource_availability.contract.ResourceAvailability.get_my_counter() -> uint64:
+get_my_counter:
+    // smart_contracts/resource_availability/contract.py:117-119
+    // # Account + Application examples
+    // @abimethod
+    // def get_my_counter(self) -> UInt64:
+    proto 0 1
+    // smart_contracts/resource_availability/contract.py:120
+    // acct = Account(ALICE_ADDRESS)
+    addr 5EQOFNPSRNI6XT3QWKB3TLGIPBHW4OBDYIMAYRAKSLRC23QAHLB2TR5CKE
+    // smart_contracts/resource_availability/contract.py:121
+    // app = Application(COUNTER_APP_ID)
+    int 1131
+    // smart_contracts/resource_availability/contract.py:122
+    // my_count, exist =op.AppLocal.get_ex_uint64(acct, app, b"my_counter")
+    byte 0x6d795f636f756e746572
+    app_local_get_ex
+    // smart_contracts/resource_availability/contract.py:123
+    // if exist:
+    bz get_my_counter_after_if_else@2
+    // smart_contracts/resource_availability/contract.py:124
+    // return my_count
+    frame_dig 0
+    swap
+    retsub
+
+get_my_counter_after_if_else@2:
+    // smart_contracts/resource_availability/contract.py:125
+    // return UInt64(0)
+    int 0
+    swap
+    retsub
+
+
+// smart_contracts.resource_availability.contract.ResourceAvailability.get_my_counter_with_arg(acct: bytes, app: uint64) -> uint64:
+get_my_counter_with_arg:
+    // smart_contracts/resource_availability/contract.py:127-128
+    // @abimethod
+    // def get_my_counter_with_arg(self, acct: Account, app: Application) -> UInt64:
+    proto 2 1
+    // smart_contracts/resource_availability/contract.py:129
+    // my_count, exist =op.AppLocal.get_ex_uint64(acct, app, b"my_counter")
+    frame_dig -2
+    frame_dig -1
+    byte 0x6d795f636f756e746572
+    app_local_get_ex
+    // smart_contracts/resource_availability/contract.py:130
+    // if exist:
+    bz get_my_counter_with_arg_after_if_else@2
+    // smart_contracts/resource_availability/contract.py:131
+    // return my_count
+    frame_dig 0
+    swap
+    retsub
+
+get_my_counter_with_arg_after_if_else@2:
+    // smart_contracts/resource_availability/contract.py:132
+    // return UInt64(0)
+    int 0
+    swap
+    retsub
